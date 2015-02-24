@@ -805,6 +805,20 @@ static int mdss_fb_probe(struct platform_device *pdev)
 		}
 	}
 
+	if (mfd->panel.type == MIPI_VIDEO_PANEL ||
+				mfd->panel.type == MIPI_CMD_PANEL) {
+		rc = of_property_read_string(pdev->dev.of_node,
+				"qcom,mdss-fb-format", &data);
+		if (!rc) {
+			if (!strcmp(data, "rgb888"))
+				mfd->fb_imgType = MDP_RGB_888;
+			else if (!strcmp(data, "rgb565"))
+				mfd->fb_imgType = MDP_RGB_565;
+			else
+				mfd->fb_imgType = MDP_RGBA_8888;
+		}
+	}
+
 	mfd->pdev = pdev;
 	mfd->split_mode = MDP_SPLIT_MODE_NONE;
 	if (pdata->next)
