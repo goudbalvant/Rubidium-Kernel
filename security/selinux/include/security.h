@@ -55,6 +55,7 @@
 #define SE_SBINITIALIZED	0x10
 #define SE_SBPROC		0x20
 #define SE_SBLABELSUPP	0x40
+#define SE_SBGENFS	0x80
 
 #define CONTEXT_STR	"context="
 #define FSCONTEXT_STR	"fscontext="
@@ -109,32 +110,33 @@ struct av_decision {
 #define XPERMS_DONTAUDIT 4
 
 #define security_xperm_set(perms, x) (perms[x >> 5] |= 1 << (x & 0x1f))
- #define security_xperm_test(perms, x) (1 & (perms[x >> 5] >> (x & 0x1f)))
- struct extended_perms_data {
- 	u32 p[8];
+#define security_xperm_test(perms, x) (1 & (perms[x >> 5] >> (x & 0x1f)))
+struct extended_perms_data {
+	u32 p[8];
 };
 
 struct extended_perms_decision {
- 	u8 used;
- 	u8 driver;
- 	struct extended_perms_data *allowed;
- 	struct extended_perms_data *auditallow;
- 	struct extended_perms_data *dontaudit;
+	u8 used;
+	u8 driver;
+	struct extended_perms_data *allowed;
+	struct extended_perms_data *auditallow;
+	struct extended_perms_data *dontaudit;
 };
 
 struct extended_perms {
- 	u16 len;	/* length associated decision chain */
- 	struct extended_perms_data drivers; /* flag drivers that are used */
+	u16 len;	/* length associated decision chain */
+	struct extended_perms_data drivers; /* flag drivers that are used */
+};
 
 /* definitions of av_decision.flags */
 #define AVD_FLAGS_PERMISSIVE	0x0001
 
 void security_compute_av(u32 ssid, u32 tsid,
 			 u16 tclass, struct av_decision *avd,
-			 struct operation *ops);
+			 struct extended_perms *xperms);
 
 void security_compute_xperms_decision(u32 ssid, u32 tsid, u16 tclass,
- 			 u8 driver, struct extended_perms_decision *xpermd);
+			 u8 driver, struct extended_perms_decision *xpermd);
 
 void security_compute_av_user(u32 ssid, u32 tsid,
 			     u16 tclass, struct av_decision *avd);
@@ -256,4 +258,3 @@ extern void selnl_notify_policyload(u32 seqno);
 extern int selinux_nlmsg_lookup(u16 sclass, u16 nlmsg_type, u32 *perm);
 
 #endif /* _SELINUX_SECURITY_H_ */
-
