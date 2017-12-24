@@ -701,7 +701,7 @@ static void context_struct_compute_av(struct context *scontext,
 
 			/* Check conditional av table for additional permissions */
 			cond_compute_av(&policydb.te_cond_avtab, &avkey,
- +					avd, xperms);
+ 					avd, xperms);
 
 		}
 	}
